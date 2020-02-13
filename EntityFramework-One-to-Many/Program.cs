@@ -69,6 +69,60 @@ namespace EntityFramework_One_to_Many
                         Console.WriteLine($"{user.Name}");
                     }
                 }
+
+                // Редактирование
+                User user1 = db.Users.FirstOrDefault(p => p.Name == "Tom");
+                if (user1 != null)
+                {
+                    user1.Name = "Tomek";
+                    db.SaveChanges();
+                }
+
+                Company FirstComp = db.Companies.FirstOrDefault(p => p.Name == "Google");
+                if (FirstComp != null)
+                {
+                    FirstComp.Name = "Alphabet";
+                    db.SaveChanges();
+                }
+
+                // смена компании сотрудника
+                User user2 = db.Users.FirstOrDefault(p => p.Name == "Bob");
+                if (user2 != null && FirstComp != null)
+                {
+                    user2.Company = FirstComp;
+                    db.SaveChanges();
+                }
+
+                // вывод пользователей
+                var usersAfterEdit = db.Users.Include(u => u.Company).ToList();
+                foreach (User user in usersAfterEdit)
+                    Console.WriteLine($"{user.Name} - {user.Company?.Name}");
+
+                // вывод компаний
+                var companiesAfterEdit = db.Companies.Include(c => c.Users).ToList();
+                foreach (Company comp in companiesAfterEdit)
+                {
+                    Console.WriteLine($"\n Компания: {comp.Name}");
+                    foreach (User user in comp.Users)
+                    {
+                        Console.WriteLine($"{user.Name}");
+                    }
+                }
+
+                ////Удаление
+                //User user1 = db.Users.FirstOrDefault(p => p.Name == "Bob");
+                //if (user1 != null)
+                //{
+                //    db.Users.Remove(user1);
+                //    db.SaveChanges();
+                //}
+
+                //Company comp = db.Companies.FirstOrDefault();
+                //if (comp != null)
+                //{
+                //    db.Companies.Remove(comp);
+                //    db.SaveChanges();
+                //}
             }
         }
     }
